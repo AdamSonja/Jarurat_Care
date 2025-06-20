@@ -1,14 +1,12 @@
-# Use an official OpenJDK runtime as a parent image
-FROM eclipse-temurin:22-jre
-
-# Set the working directory
+# Stage 1: Build the JAR
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy the built jar to the container
-COPY target/whatsapp-backend-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose the port (Render will set $PORT)
+# Stage 2: Run the JAR
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Run the jar file
-CMD ["java", "-jar", "app.jar"] 
+ENTRYPOINT ["java", "-jar", "app.jar"] 
