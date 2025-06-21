@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping
@@ -29,6 +31,43 @@ public class WhatsAppController {
     public WhatsAppController(WhatsAppService whatsappService, FirestoreService firestoreService) {
         this.whatsappService = whatsappService;
         this.firestoreService = firestoreService;
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> healthCheck() {
+        Map<String, Object> health = new HashMap<>();
+        health.put("status", "UP");
+        health.put("timestamp", new java.util.Date());
+        health.put("service", "WhatsApp Business API");
+        health.put("version", "1.0.0");
+        
+        // Check if WhatsApp service is configured
+        try {
+            health.put("whatsapp_configured", whatsappService != null);
+        } catch (Exception e) {
+            health.put("whatsapp_configured", false);
+            health.put("whatsapp_error", e.getMessage());
+        }
+        
+        return ResponseEntity.ok(health);
+    }
+
+    @GetMapping("/debug/webhook-token")
+    public ResponseEntity<Map<String, Object>> debugWebhookToken() {
+        Map<String, Object> debug = new HashMap<>();
+        try {
+            // Use reflection to get the private field value
+            java.lang.reflect.Field field = whatsappService.getClass().getDeclaredField("webhookVerifyToken");
+            field.setAccessible(true);
+            String token = (String) field.get(whatsappService);
+            
+            debug.put("webhook_verify_token", token);
+            debug.put("token_length", token != null ? token.length() : 0);
+            debug.put("is_default_value", "your_webhook_verify_token_here".equals(token));
+        } catch (Exception e) {
+            debug.put("error", e.getMessage());
+        }
+        return ResponseEntity.ok(debug);
     }
 
     @GetMapping("/webhook")

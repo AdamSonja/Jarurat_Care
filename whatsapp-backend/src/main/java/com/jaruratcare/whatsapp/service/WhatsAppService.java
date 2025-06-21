@@ -26,6 +26,9 @@ public class WhatsAppService {
     @Value("${whatsapp.phone-number-id}")
     private String phoneNumberId;
 
+    @Value("${whatsapp.webhook-verify-token}")
+    private String webhookVerifyToken;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public void sendMessage(String to, String text) {
@@ -54,8 +57,15 @@ public class WhatsAppService {
     }
 
     public boolean verifyWebhook(String mode, String token, String challenge) {
-        // Replace with your own verification token from the Meta App Dashboard
-        String verifyToken = "YOUR_WEBHOOK_VERIFY_TOKEN";
-        return "subscribe".equals(mode) && verifyToken.equals(token);
+        logger.debug("Webhook verification - Mode: {}, Token: {}, Expected Token: {}", mode, token, webhookVerifyToken);
+        logger.debug("Token comparison - Received: '{}', Expected: '{}', Length: {} vs {}", 
+                    token, webhookVerifyToken, token.length(), webhookVerifyToken.length());
+        
+        boolean modeMatch = "subscribe".equals(mode);
+        boolean tokenMatch = webhookVerifyToken.equals(token);
+        
+        logger.debug("Verification results - Mode match: {}, Token match: {}", modeMatch, tokenMatch);
+        
+        return modeMatch && tokenMatch;
     }
 } 
