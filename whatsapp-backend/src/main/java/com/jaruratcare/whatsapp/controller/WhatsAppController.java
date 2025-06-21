@@ -105,6 +105,34 @@ public class WhatsAppController {
         try {
             JsonNode root = objectMapper.readTree(payload);
             
+            // Log the structure of the payload
+            logger.info("=== PAYLOAD STRUCTURE ===");
+            logger.info("Root object: {}", root.getNodeType());
+            if (root.has("object")) {
+                logger.info("Object type: {}", root.get("object").asText());
+            }
+            if (root.has("entry")) {
+                JsonNode entry = root.get("entry");
+                logger.info("Entry array size: {}", entry.size());
+                if (entry.size() > 0) {
+                    JsonNode firstEntry = entry.get(0);
+                    logger.info("First entry ID: {}", firstEntry.has("id") ? firstEntry.get("id").asText() : "No ID");
+                    if (firstEntry.has("changes")) {
+                        JsonNode changes = firstEntry.get("changes");
+                        logger.info("Changes array size: {}", changes.size());
+                        if (changes.size() > 0) {
+                            JsonNode firstChange = changes.get(0);
+                            logger.info("First change field: {}", firstChange.has("field") ? firstChange.get("field").asText() : "No field");
+                            if (firstChange.has("value")) {
+                                JsonNode value = firstChange.get("value");
+                                logger.info("Value fields: {}", value.fieldNames());
+                            }
+                        }
+                    }
+                }
+            }
+            logger.info("=========================");
+            
             // Check for incoming messages
             Optional<JsonNode> messageNode = findMessageNode(root);
             if (messageNode.isPresent()) {
