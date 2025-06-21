@@ -149,8 +149,8 @@ public class WhatsAppController {
                 // firestoreService.saveMessage(inboundMessage);
                 
                 // Example of echoing the message back
-                logger.info("Sending echo response to: {}", from);
-                whatsappService.sendMessage(from, "You said: " + text);
+                logger.info("Sending welcome response to: {}", from);
+                whatsappService.sendMessage(from, "Hi welcome to JaruratCare.");
             } else {
                 // Check for status updates
                 Optional<JsonNode> statusNode = findStatusNode(root);
