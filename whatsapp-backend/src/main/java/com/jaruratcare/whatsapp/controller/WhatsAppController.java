@@ -112,14 +112,18 @@ public class WhatsAppController {
     @PostMapping("/send")
     public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request) {
         try {
-            whatsappService.sendMessage(request.getTo(), request.getText());
-            // Temporarily comment out Firebase to avoid database errors
-            // Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
-            // firestoreService.saveMessage(outboundMessage);
-            return ResponseEntity.ok("Message sent successfully.");
+            boolean success = whatsappService.sendMessage(request.getTo(), request.getText());
+            if (success) {
+                // Temporarily comment out Firebase to avoid database errors
+                // Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
+                // firestoreService.saveMessage(outboundMessage);
+                return ResponseEntity.ok("Message sent successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send message to WhatsApp API.");
+            }
         } catch (Exception e) {
             logger.error("Error sending message via API", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send message.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send message: " + e.getMessage());
         }
     }
 

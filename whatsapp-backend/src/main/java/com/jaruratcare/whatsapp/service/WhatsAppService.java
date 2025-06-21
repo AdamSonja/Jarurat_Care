@@ -31,7 +31,7 @@ public class WhatsAppService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void sendMessage(String to, String text) {
+    public boolean sendMessage(String to, String text) {
         String url = whatsappApiUrl + "/" + phoneNumberId + "/messages";
 
         HttpHeaders headers = new HttpHeaders();
@@ -50,9 +50,10 @@ public class WhatsAppService {
         try {
             restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
             logger.info("Successfully sent message to {}", to);
+            return true;
         } catch (Exception e) {
             logger.error("Failed to send message to {}: {}", to, e.getMessage());
-            // It's good practice to re-throw a custom exception or handle it appropriately
+            return false;
         }
     }
 
