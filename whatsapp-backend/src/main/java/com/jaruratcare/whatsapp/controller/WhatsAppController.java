@@ -148,9 +148,13 @@ public class WhatsAppController {
                 // Message inboundMessage = new Message(null, from, text, Timestamp.now(), Message.MessageDirection.INBOUND);
                 // firestoreService.saveMessage(inboundMessage);
                 
-                // Example of echoing the message back
-                logger.info("Sending welcome response to: {}", from);
-                whatsappService.sendMessage(from, "Hi welcome to JaruratCare.");
+                // Only respond to "hey" message
+                if (text.toLowerCase().trim().equals("hey")) {
+                    logger.info("Sending welcome response to: {}", from);
+                    whatsappService.sendMessage(from, "Hi welcome to JaruratCare.");
+                } else {
+                    logger.info("No response sent - message was not 'hey'");
+                }
             } else {
                 // Check for status updates
                 Optional<JsonNode> statusNode = findStatusNode(root);
