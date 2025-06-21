@@ -104,8 +104,9 @@ public class WhatsAppController {
         
         try {
             JsonNode root = objectMapper.readTree(payload);
+            
+            // Check for incoming messages
             Optional<JsonNode> messageNode = findMessageNode(root);
-
             if (messageNode.isPresent()) {
                 String from = messageNode.get().get("from").asText();
                 String text = messageNode.get().get("text").get("body").asText();
@@ -123,7 +124,22 @@ public class WhatsAppController {
                 logger.info("Sending echo response to: {}", from);
                 whatsappService.sendMessage(from, "You said: " + text);
             } else {
-                logger.info("No message found in webhook payload");
+                // Check for status updates
+                Optional<JsonNode> statusNode = findStatusNode(root);
+                if (statusNode.isPresent()) {
+                    String status = statusNode.get().get("status").asText();
+                    String messageId = statusNode.get().get("id").asText();
+                    String recipientId = statusNode.get().get("recipient_id").asText();
+                    
+                    logger.info("=== MESSAGE STATUS UPDATE ===");
+                    logger.info("Message ID: {}", messageId);
+                    logger.info("Status: {}", status);
+                    logger.info("Recipient: {}", recipientId);
+                    logger.info("=============================");
+                } else {
+                    logger.info("No message or status found in webhook payload");
+                    logger.info("Available fields: {}", root.fieldNames());
+                }
             }
         } catch (Exception e) {
             logger.error("Error processing webhook payload", e);
@@ -158,6 +174,12 @@ public class WhatsAppController {
     private Optional<JsonNode> findMessageNode(JsonNode root) {
         return Optional.ofNullable(root)
                 .map(r -> r.at("/entry/0/changes/0/value/messages/0"))
+                .filter(node -> !node.isMissingNode());
+    }
+
+    private Optional<JsonNode> findStatusNode(JsonNode root) {
+        return Optional.ofNullable(root)
+                .map(r -> r.at("/entry/0/changes/0/value/statuses/0"))
                 .filter(node -> !node.isMissingNode());
     }
 } 
