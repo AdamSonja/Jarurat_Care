@@ -113,8 +113,9 @@ public class WhatsAppController {
     public ResponseEntity<String> sendMessage(@RequestBody SendMessageRequest request) {
         try {
             whatsappService.sendMessage(request.getTo(), request.getText());
-            Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
-            firestoreService.saveMessage(outboundMessage);
+            // Temporarily comment out Firebase to avoid database errors
+            // Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
+            // firestoreService.saveMessage(outboundMessage);
             return ResponseEntity.ok("Message sent successfully.");
         } catch (Exception e) {
             logger.error("Error sending message via API", e);
