@@ -52,6 +52,17 @@ public class WhatsAppController {
         return ResponseEntity.ok(health);
     }
 
+    @GetMapping("/debug/webhook-status")
+    public ResponseEntity<Map<String, Object>> webhookStatus() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("webhook_endpoint", "/webhook");
+        status.put("webhook_method", "POST");
+        status.put("webhook_configured", true);
+        status.put("message", "Webhook endpoint is active. Send a message to your WhatsApp Business number to test.");
+        status.put("timestamp", new java.util.Date());
+        return ResponseEntity.ok(status);
+    }
+
     @GetMapping("/debug/webhook-token")
     public ResponseEntity<Map<String, Object>> debugWebhookToken() {
         Map<String, Object> debug = new HashMap<>();
@@ -88,7 +99,9 @@ public class WhatsAppController {
 
     @PostMapping("/webhook")
     public ResponseEntity<Void> handleWebhookNotification(@RequestBody String payload) {
-        logger.debug("Received webhook payload: {}", payload);
+        logger.info("=== WEBHOOK RECEIVED ===");
+        logger.info("Received webhook payload: {}", payload);
+        
         try {
             JsonNode root = objectMapper.readTree(payload);
             Optional<JsonNode> messageNode = findMessageNode(root);
@@ -97,11 +110,20 @@ public class WhatsAppController {
                 String from = messageNode.get().get("from").asText();
                 String text = messageNode.get().get("text").get("body").asText();
 
-                Message inboundMessage = new Message(null, from, text, Timestamp.now(), Message.MessageDirection.INBOUND);
-                firestoreService.saveMessage(inboundMessage);
+                logger.info("=== INCOMING MESSAGE ===");
+                logger.info("From: {}", from);
+                logger.info("Text: {}", text);
+                logger.info("========================");
+
+                // Temporarily disable Firebase to avoid database errors
+                // Message inboundMessage = new Message(null, from, text, Timestamp.now(), Message.MessageDirection.INBOUND);
+                // firestoreService.saveMessage(inboundMessage);
                 
                 // Example of echoing the message back
+                logger.info("Sending echo response to: {}", from);
                 whatsappService.sendMessage(from, "You said: " + text);
+            } else {
+                logger.info("No message found in webhook payload");
             }
         } catch (Exception e) {
             logger.error("Error processing webhook payload", e);
