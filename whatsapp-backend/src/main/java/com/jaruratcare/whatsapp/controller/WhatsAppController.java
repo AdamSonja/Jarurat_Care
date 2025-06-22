@@ -33,6 +33,23 @@ public class WhatsAppController {
         this.firestoreService = firestoreService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<Map<String, Object>> root() {
+        Map<String, Object> info = new HashMap<>();
+        info.put("service", "WhatsApp Business API");
+        info.put("version", "1.0.0");
+        info.put("status", "running");
+        info.put("timestamp", new java.util.Date());
+        info.put("endpoints", Map.of(
+            "health", "/health",
+            "webhook", "/webhook",
+            "send_message", "/send",
+            "swagger_ui", "/swagger-ui.html",
+            "api_docs", "/api-docs"
+        ));
+        return ResponseEntity.ok(info);
+    }
+
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> health = new HashMap<>();
