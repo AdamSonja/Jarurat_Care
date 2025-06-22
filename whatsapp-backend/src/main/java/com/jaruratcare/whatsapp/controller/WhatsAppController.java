@@ -161,9 +161,9 @@ public class WhatsAppController {
                 logger.info("Text: {}", text);
                 logger.info("========================");
 
-                // Temporarily disable Firebase to avoid database errors
-                // Message inboundMessage = new Message(null, from, text, Timestamp.now(), Message.MessageDirection.INBOUND);
-                // firestoreService.saveMessage(inboundMessage);
+                // Save incoming message to Firebase
+                Message inboundMessage = new Message(null, from, text, Timestamp.now(), Message.MessageDirection.INBOUND);
+                firestoreService.saveMessage(inboundMessage);
                 
                 // Only respond to "hey" message
                 if (text.toLowerCase().trim().equals("hey")) {
@@ -201,9 +201,9 @@ public class WhatsAppController {
         try {
             boolean success = whatsappService.sendMessage(request.getTo(), request.getText());
             if (success) {
-                // Temporarily comment out Firebase to avoid database errors
-                // Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
-                // firestoreService.saveMessage(outboundMessage);
+                // Save message to Firebase
+                Message outboundMessage = new Message(null, request.getTo(), request.getText(), Timestamp.now(), Message.MessageDirection.OUTBOUND);
+                firestoreService.saveMessage(outboundMessage);
                 return ResponseEntity.ok("Message sent successfully.");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send message to WhatsApp API.");
