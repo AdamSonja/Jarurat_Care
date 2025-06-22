@@ -277,6 +277,10 @@ curl -X POST https://jarurat-care-ch4q.onrender.com/send \
   }'
 ```
 
+The screenshot below shows a test message successfully received on WhatsApp.
+
+![WhatsApp Message Screenshot](docs/images/Screeshots.jpg)
+
 ### Checking Service Health
 ```bash
 curl https://jarurat-care-ch4q.onrender.com/health
@@ -358,12 +362,6 @@ java -jar target/whatsapp-backend-0.0.1-SNAPSHOT.jar
 4. Update documentation
 5. Submit pull request
 
-### Code Quality
-- **Lombok**: Reduces boilerplate code
-- **Spring Validation**: Input validation
-- **Comprehensive Logging**: Debug and monitoring
-- **Error Handling**: Graceful error responses
-
 ### Testing
 ```bash
 # Run tests
@@ -372,17 +370,6 @@ mvn test
 # Run with coverage
 mvn jacoco:report
 ```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Update documentation
-6. Submit a pull request
-
-
 ## 🙏 Acknowledgments
 
 - **Meta WhatsApp Business API**: For messaging platform
