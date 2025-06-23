@@ -353,28 +353,4 @@ java -jar target/whatsapp-backend-0.0.1-SNAPSHOT.jar
 - **OpenApiConfig**: Swagger documentation setup
 - **WebConfig**: Web configuration
 
-## 🔧 Development
-
-### Adding New Features
-1. Create feature branch: `git checkout -b feature/new-feature`
-2. Implement changes following existing patterns
-3. Add tests for new functionality
-4. Update documentation
-5. Submit pull request
-
-### Testing
-```bash
-# Run tests
-mvn test
-
-# Run with coverage
-mvn jacoco:report
-```
-## 🙏 Acknowledgments
-
-- **Meta WhatsApp Business API**: For messaging platform
-- **Google Firebase**: For cloud database services
-- **Spring Boot Team**: For the excellent framework
-- **Render**: For cloud deployment platform
-
 
