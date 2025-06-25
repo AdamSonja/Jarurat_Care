@@ -164,7 +164,7 @@ GET /messages/{phoneNumber}
 [
   {
     "id": "message_id",
-    "phoneNumber": "+918260635830",
+    "phoneNumber": "+91xxxxxxxxxx",
     "content": "Hello from JaruratCare!",
     "timestamp": "2025-06-22T10:40:03.289+00:00",
     "direction": "OUTBOUND"
